@@ -2963,6 +2963,39 @@ def cache_(on=False, off=False, dir=None, ls=False, purge=False, global_cfg=Fals
         error("Invalid cache command. Please see \"mbed cache --help\" for valid commands.")
 
 
+
+# Detect command
+@subcommand('cloud',
+    hidden_aliases=['cloud'],
+    help='Mbed Cloud tools.\n\n',
+    description=(
+        "Mbed Cloud command line tools."))
+def cloud():
+    # Gather remaining arguments
+    args = remainder
+    # Find the root of the program
+    program = Program(getcwd(), False)
+    program.check_requirements(True)
+    # Change directories to the program root to use mbed OS tools
+    with cd(program.path):
+        tools_dir = program.get_tools_dir()
+
+    if tools_dir:
+        # Prepare environment variables
+        env = program.get_env()
+
+        try:
+            popen([python_cmd, '-u', os.path.join(tools_dir, 'cloud/cloud.py')]
+                  + args,
+                  env=env)
+        except ProcessException as e:
+            error("Something went wrong (run with '-vv' for more information)")
+            if very_verbose:
+                error(str(e))
+    else:
+        warning("The mbed-os tools were not found in \"%s\". \n" % program.path)
+
+
 @subcommand('help',
     help='This help screen')
 def help_():
