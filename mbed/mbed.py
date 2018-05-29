@@ -2966,7 +2966,9 @@ def cache_(on=False, off=False, dir=None, ls=False, purge=False, global_cfg=Fals
 
 # Detect command
 @subcommand('cloud',
-    hidden_aliases=['cloud'],
+    dict(name=['-g', '--generate-credentials'], help='Generate a developer credentials file for Mbed Cloud (mbed_cloud_dev_credentials.c)'),
+    dict(name=['-s', '--host-name'], help='(Optional) Specify the API host name. Default: https://api.mbedcloud.com'),
+    dict(name=['-a', '--api-key'], help='(Optional) API key for Mbed Cloud.'),
     help='Mbed Cloud tools.\n\n',
     description=(
         "Mbed Cloud command line tools."))
