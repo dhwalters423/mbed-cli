@@ -2966,13 +2966,13 @@ def cache_(on=False, off=False, dir=None, ls=False, purge=False, global_cfg=Fals
 
 # Detect command
 @subcommand('cloud',
-    dict(name=['-g', '--generate-credentials'], help='Generate a developer credentials file for Mbed Cloud (mbed_cloud_dev_credentials.c)'),
+    dict(name=['-g', '--generate-credentials'], action="store_true", help='Generate a developer credentials file for Mbed Cloud (mbed_cloud_dev_credentials.c)'),
     dict(name=['-s', '--host-name'], help='(Optional) Specify the API host name. Default: https://api.mbedcloud.com'),
     dict(name=['-a', '--api-key'], help='(Optional) API key for Mbed Cloud.'),
     help='Mbed Cloud tools.\n\n',
     description=(
         "Mbed Cloud command line tools."))
-def cloud():
+def cloud(generate_credentials=False, host_name=None, api_key=None):
     # Gather remaining arguments
     args = remainder
     # Find the root of the program
@@ -2988,8 +2988,12 @@ def cloud():
 
         try:
             popen([python_cmd, '-u', os.path.join(tools_dir, 'cloud/cloud.py')]
-                  + args,
-                  env=env)
+              + (['-g'] if generate_credentials else [])
+              + (['-a', api_key] if api_key else [])
+              + (['-s', host_name] if host_name else[])
+              + args,
+              env=env)
+
         except ProcessException as e:
             error("Something went wrong (run with '-vv' for more information)")
             if very_verbose:
